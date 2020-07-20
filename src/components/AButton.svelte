@@ -1,41 +1,23 @@
 <script>
-  import { onMount } from 'svelte'
-
   export let title
   export let dense
-
-  // const acl = null
-
-  onMount(() => {
-    console.log(window.DeviceMotionEvent)
-
-    if (window.DeviceMotionEvent)
-      window.addEventListener('devicemotion', accelerometerUpdate, true)
-  })
-
-  // if (this.Accelerometer) {
-  //   let acl = new window.Accelerometer({frequency: 60})
-
-  //   acl.addEventListener('reading', () => {
-  //     console.log("Acceleration along the X-axis " + acl.x);
-  //     console.log("Acceleration along the Y-axis " + acl.y);
-  //     console.log("Acceleration along the Z-axis " + acl.z);
-  //   })
-
-  //   console.log(acl)
-  // }
+  export let position
 
   const classes = (dense === true) ? 'dense' : ''
-  
+
+  $: aShadow = {
+    x: position.x + position.z,
+    y: 5,
+    size: 2
+  }
+
+  const roundPosition = (val) => Math.round(val * 100) / 100
+
   const stylesArr = [
-    'box-shadow: 5px 5px 2px #ccc'
+    'box-shadow: ' + aShadow.x + 'px ' + aShadow.y + 'px ' + aShadow.size + 'px #ccc'
   ]
 
   const styles = stylesArr.join(';')
-
-  const accelerometerUpdate = (e) => {
-    console.log(e)
-  }
 </script>
 <style>
 button {
@@ -52,3 +34,4 @@ button.dense {
   class={classes}
   style={styles}
 >{title}</button>
+{roundPosition(aShadow.x)} y{roundPosition(aShadow.y)} z{roundPosition(aShadow.size)}

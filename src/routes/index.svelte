@@ -1,5 +1,39 @@
 <script>
+  import { onMount } from 'svelte'
   import AButton from '../components/AButton.svelte'
+
+  const motionAllowed = true
+  const aPosition = {
+    x: 0,
+    y: 0,
+    z: 0
+  }
+  let unsetListener = null
+
+  onMount(() => {
+    if (!window.DeviceMotionEvent) {
+      motionAllowed = false
+      return
+    }
+
+    window.addEventListener('devicemotion', accelerometerUpdate, true)
+
+    unsetListener = () => {
+      motionAllowed = false
+      window.removeEventListener('devicemotion', accelerometerUpdate, true)
+    }
+  })
+
+  const accelerometerUpdate = (e) => {
+    if (typeof e.accelerationIncludingGravity === typeof undefined) {
+      unsetListener()
+      return
+    }
+
+    aPosition.x = e.accelerationIncludingGravity.x
+    aPosition.y = e.accelerationIncludingGravity.y
+    aPosition.z = e.accelerationIncludingGravity.z
+  }
 </script>
 <style>
   h1, figure, p {
@@ -40,7 +74,8 @@
 </svelte:head>
 
 <h1>Great success!</h1>
-<AButton title={'Test button'} />
+<AButton title={'Test button'} position={aPosition} dense={false} />
+<p>&nbsp;</p>
 <figure>
   <img alt='Success Kid' src='successkid.jpg'>
   <figcaption>Have fun with Sapper!</figcaption>
